@@ -1,0 +1,49 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+variables:
+- name: storageContainer
+  value: test02345
+- name: subscription
+  value: Subscription (4b0b8ad9-81fb-4796-8ad4-a6f7791b5494)
+
+trigger:
+- main
+
+pool:
+  vmImage: windows-latest
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '6.x'
+    checkLatest: true
+    force32bit: true
+- task: CmdLine@2
+  displayName: npm install
+  inputs:
+    script: |
+      npm install
+- task: CmdLine@2
+  displayName: ng build
+  inputs:
+    script: |
+      set PATH=%PATH%;%CD%\node_modules\.bin;C:\npm\prefix
+      ng build --subresource-integrity --output-hashing none
+- task: AzureFileCopy@2
+  displayName: Deploy Files
+  inputs:
+    SourcePath: '$(System.DefaultWorkingDirectory)\dist\$(Build.Repository.Name)'
+    azureSubscription: $(subscription)
+    Destination: 'AzureBlob'
+    storage: $(storageContainer)
+    ContainerName: '$web'
+    BlobPrefix: ''
+- task: AzureCLI@2
+  displayName: Delete Old Files
+  inputs:
+    azureSubscription: $(subscription)
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az storage blob delete-batch -s `$web --account-name $(storageContainer) --if-unmodified-since $(Get-Date ((Get-Date).addMinutes(-5)) -UFORMAT +%Y-%m-%dT%H:%MZ)'
