@@ -13,7 +13,7 @@ steps:
 - task: AzureFileCopy@2
   inputs:
     SourcePath: 'index.html'
-    azureSubscription: 'Azure subscription 1(4b0b8ad9-81fb-4796-8ad4-a6f7791b5494)'
+    azureSubscription: 'MyARMConnection'
     Destination: 'AzureBlob'
     storage: 'test02345'
     ContainerName: '$web'
@@ -22,7 +22,7 @@ steps:
 - task: AzureFileCopy@2
   inputs:
     SourcePath: 'error.html'
-    azureSubscription: 'Azure subscription 1(4b0b8ad9-81fb-4796-8ad4-a6f7791b5494)'
+    azureSubscription: 'MyARMConnection'
     Destination: 'AzureBlob'
     storage: 'test02345'
     ContainerName: '$web'
