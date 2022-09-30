@@ -20,3 +20,4 @@ jobs:
             azure-devops-project-url: 'https://dev.azure.com/fnweb3/Testing-terraform-project'
             azure-pipeline-name: 'azure-pipelines'
             azure-devops-token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
+
